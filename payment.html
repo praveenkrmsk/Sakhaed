@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - SakhaED</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .payment-container {
+            min-height: 100vh;
+            background: var(--light-gray);
+            padding-top: 100px;
+        }
+        
+        .payment-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .payment-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .payment-header h1 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .payment-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .payment-steps {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .payment-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            right: 50px;
+            height: 2px;
+            background: #ddd;
+            z-index: 1;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+        
+        .step.active .step-number {
+            background: var(--primary);
+        }
+        
+        .step.completed .step-number {
+            background: var(--success);
+        }
+        
+        .step.completed .step-number::after {
+            content: '✓';
+        }
+        
+        .payment-body {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+        
+        .payment-methods {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .payment-method {
+            border: 2px solid #ddd;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .payment-method:hover,
+        .payment-method.selected {
+            border-color: var(--primary);
+            background: #f0f8ff;
+        }
+        
+        .payment-method-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .payment-method-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .payment-form {
+            margin-top: 2rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .payment-summary {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 120px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--light);
+        }
+        
+        .summary-total {
+            border-bottom: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        .secure-payment {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-top: 2rem;
+            border: 1px solid #e9ecef;
+        }
+        
+        .secure-payment i {
+            font-size: 2rem;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+        
+        .coupon-section {
+            margin: 2rem 0;
+        }
+        
+        .coupon-input {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .payment-body {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-steps {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            
+            .payment-steps::before {
+                display: none;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h1>Sakha<span>ED</span></h1>
+                </div>
+                
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html">Home</a>
+                    <a href="index.html#courses">Courses</a>
+                    <a href="dashboard.html">Dashboard</a>
+                </div>
+                
+                <div class="auth-buttons">
+                    <a href="index.html" class="btn btn-outline">Back to Home</a>
+                </div>
+                
+                <div class="mobile-menu" id="mobileMenu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Payment Container -->
+    <section class="payment-container">
+        <div class="container">
+            <div class="payment-wrapper">
+                <div class="payment-header">
+                    <h1><i class="fas fa-lock"></i> Secure Checkout</h1>
+                    <p>Complete your course enrollment with our secure payment system</p>
+                </div>
+                
+                <!-- Payment Steps -->
+                <div class="payment-steps">
+                    <div class="step completed">
+                        <div class="step-number">1</div>
+                        <span>Course Selection</span>
+                    </div>
+                    <div class="step active">
+                        <div class="step-number">2</div>
+                        <span>Payment</span>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <span>Confirmation</span>
+                    </div>
+                </div>
+                
+                <div class="payment-body">
+                    <!-- Payment Methods -->
+                    <div class="payment-methods">
+                        <h2><i class="fas fa-credit-card"></i> Select Payment Method</h2>
+                        
+                        <div class="payment-method selected" data-method="card">
+                            <div class="payment-method-header">
+                                <div class="payment-method-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div>
+                                    <h3>Credit/Debit Card</h3>
+                                    <p>Visa, MasterCard, RuPay, American Express</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method" data-method="paypal">
+                            <div class="payment-method-header">
+                                <div class="payment-method-icon">
+                                    <i class="fab fa-paypal"></i>
+                                </div>
+                                <div>
+                                    <h3>PayPal</h3>
+                                    <p>Pay securely with your PayPal account</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method" data-method="upi">
+                            <div class="payment-method-header">
+                                <div class="payment-method-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div>
+                                    <h3>UPI</h3>
+                                    <p>Google Pay, PhonePe, Paytm, BHIM UPI</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Payment Form -->
+                        <div class="payment-form" id="card-form">
+                            <h3>Card Details</h3>
+                            
+                            <div class="form-group">
+                                <label>Card Number</label>
+                                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Expiry Date</label>
+                                    <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label>CVV</label>
+                                    <input type="password" id="card-cvv" placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Name on Card</label>
+                                <input type="text" id="card-name" placeholder="John Doe">
+                            </div>
+                            
+                            <div class="coupon-section">
+                                <h4><i class="fas fa-tag"></i> Apply Coupon Code</h4>
+                                <div class="coupon-input">
+                                    <input type="text" id="coupon-code" placeholder="Enter coupon code">
+                                    <button type="button" id="apply-coupon" class="btn btn-outline">Apply</button>
+                                </div>
+                                <small id="coupon-message"></small>
+                            </div>
+                            
+                            <div class="secure-payment">
+                                <i class="fas fa-shield-alt"></i>
+                                <h4>Secure Payment</h4>
+                                <p>Your payment information is encrypted and secure. We never store your card details.</p>
+                            </div>
+                            
+                            <button id="pay-now" class="btn btn-primary btn-large btn-block">
+                                <i class="fas fa-lock"></i> Complete Payment
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Summary -->
+                    <div class="payment-summary">
+                        <h2><i class="fas fa-receipt"></i> Order Summary</h2>
+                        
+                        <div class="summary-item">
+                            <span>Course:</span>
+                            <span id="course-title">JavaScript Fundamentals</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span>Original Price:</span>
+                            <span id="original-price">$49.99</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span>Discount:</span>
+                            <span id="discount-amount">$0.00</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span>Tax:</span>
+                            <span>$0.00</span>
+                        </div>
+                        
+                        <div class="summary-item summary-total">
+                            <span>Total Amount:</span>
+                            <span id="total-amount">$49.99</span>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <span>Payment Method:</span>
+                            <span id="selected-method">Credit Card</span>
+                        </div>
+                        
+                        <hr style="margin: 1.5rem 0;">
+                        
+                        <div class="payment-guarantee">
+                            <h4><i class="fas fa-check-circle" style="color: var(--success);"></i> 30-Day Money-Back Guarantee</h4>
+                            <p>If you're not satisfied with the course, get a full refund within 30 days.</p>
+                        </div>
+                        
+                        <div class="payment-support">
+                            <h4><i class="fas fa-headset"></i> Need Help?</h4>
+                            <p>Contact our support team at support@sakhaed.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p><i class="fas fa-shield-alt"></i> Secure Payment Gateway | 256-bit SSL Encryption | PCI DSS Compliant</p>
+                <p>&copy; 2024 SakhaED. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'index.html#login';
+                return;
+            }
+            
+            // Get course from URL or localStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('course') || localStorage.getItem('selectedCourse');
+            
+            // Demo course data
+            const courses = {
+                '1': { title: 'HTML5 & CSS3 Mastery', price: 0 },
+                '2': { title: 'JavaScript Fundamentals', price: 49.99 },
+                '3': { title: 'Python for Data Science', price: 79.99 },
+                '4': { title: 'React Native Mobile Development', price: 69.99 }
+            };
+            
+            const course = courses[courseId] || courses['2'];
+            
+            // Update UI with course details
+            document.getElementById('course-title').textContent = course.title;
+            document.getElementById('original-price').textContent = `$${course.price.toFixed(2)}`;
+            document.getElementById('total-amount').textContent = `$${course.price.toFixed(2)}`;
+            
+            // Payment method selection
+            const paymentMethods = document.querySelectorAll('.payment-method');
+            paymentMethods.forEach(method => {
+                method.addEventListener('click', function() {
+                    paymentMethods.forEach(m => m.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    const methodType = this.dataset.method;
+                    document.getElementById('selected-method').textContent = 
+                        methodType === 'card' ? 'Credit Card' :
+                        methodType === 'paypal' ? 'PayPal' : 'UPI';
+                });
+            });
+            
+            // Format card number input
+            document.getElementById('card-number').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formatted = value.match(/.{1,4}/g)?.join(' ') || '';
+                e.target.value = formatted;
+            });
+            
+            // Format expiry date input
+            document.getElementById('card-expiry').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+            });
+            
+            // Apply coupon
+            document.getElementById('apply-coupon').addEventListener('click', function() {
+                const couponCode = document.getElementById('coupon-code').value.toUpperCase();
+                const message = document.getElementById('coupon-message');
+                
+                // Demo coupons
+                const validCoupons = {
+                    'SAKHA10': 10,
+                    'WELCOME20': 20,
+                    'STUDENT50': 50
+                };
+                
+                if (validCoupons[couponCode]) {
+                    const discountPercent = validCoupons[couponCode];
+                    const discountAmount = (course.price * discountPercent) / 100;
+                    const finalPrice = course.price - discountAmount;
+                    
+                    document.getElementById('discount-amount').textContent = `-$${discountAmount.toFixed(2)}`;
+                    document.getElementById('total-amount').textContent = `$${finalPrice.toFixed(2)}`;
+                    
+                    message.textContent = `Coupon applied! ${discountPercent}% discount saved.`;
+                    message.style.color = 'var(--success)';
+                    
+                    // Store discount info
+                    localStorage.setItem('appliedCoupon', JSON.stringify({
+                        code: couponCode,
+                        discount: discountPercent,
+                        amount: discountAmount
+                    }));
+                } else {
+                    message.textContent = 'Invalid coupon code';
+                    message.style.color = 'var(--danger)';
+                }
+            });
+            
+            // Process payment
+            document.getElementById('pay-now').addEventListener('click', async function() {
+                // Validate card details
+                const cardNumber = document.getElementById('card-number').value.replace(/\s+/g, '');
+                const cardExpiry = document.getElementById('card-expiry').value;
+                const cardCVV = document.getElementById('card-cvv').value;
+                const cardName = document.getElementById('card-name').value;
+                
+                if (!cardNumber || !cardExpiry || !cardCVV || !cardName) {
+                    alert('Please fill all card details');
+                    return;
+                }
+                
+                if (cardNumber.length < 16) {
+                    alert('Please enter a valid 16-digit card number');
+                    return;
+                }
+                
+                // Simulate payment processing
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Generate transaction ID
+                    const transactionId = 'TXN' + Date.now() + Math.floor(Math.random() * 1000);
+                    
+                    // Create payment record
+                    const paymentData = {
+                        id: transactionId,
+                        user: localStorage.getItem('userName') || 'User',
+                        course: course.title,
+                        amount: course.price,
+                        date: new Date().toISOString().split('T')[0],
+                        status: 'completed',
+                        method: 'card'
+                    };
+                    
+                    // Store payment in localStorage
+                    const payments = JSON.parse(localStorage.getItem('payments') || '[]');
+                    payments.push(paymentData);
+                    localStorage.setItem('payments', JSON.stringify(payments));
+                    
+                    // Enroll user in course
+                    const enrolledCourses = JSON.parse(localStorage.getItem('enrolledCourses') || '[]');
+                    if (!enrolledCourses.some(c => c.id === courseId)) {
+                        enrolledCourses.push({
+                            id: courseId,
+                            title: course.title,
+                            enrolledDate: new Date().toISOString(),
+                            progress: 0
+                        });
+                        localStorage.setItem('enrolledCourses', JSON.stringify(enrolledCourses));
+                    }
+                    
+                    // Show success message
+                    alert(`Payment successful!\n\nTransaction ID: ${transactionId}\nAmount: $${course.price.toFixed(2)}\nCourse: ${course.title}`);
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+            });
+            
+            // Add card validation
+            document.getElementById('card-number').addEventListener('blur', function() {
+                const cardNumber = this.value.replace(/\s+/g, '');
+                if (cardNumber.length > 0 && cardNumber.length < 16) {
+                    this.style.borderColor = 'var(--danger)';
+                } else {
+                    this.style.borderColor = '#ddd';
+                }
+            });
+            
+            document.getElementById('card-cvv').addEventListener('blur', function() {
+                if (this.value.length > 0 && this.value.length < 3) {
+                    this.style.borderColor = 'var(--danger)';
+                } else {
+                    this.style.borderColor = '#ddd';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

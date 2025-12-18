@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SakhaED - Admin Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Admin Portal Styles */
+        .admin-portal {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--secondary-dark), var(--primary-dark));
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background Animation */
+        .admin-portal::before {
+            content: '';
+            position: absolute;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-100px, -100px) rotate(360deg); }
+        }
+
+        /* Portal Container */
+        .portal-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            animation: portalEnter 0.6s ease-out;
+        }
+
+        @keyframes portalEnter {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Portal Logo */
+        .portal-logo {
+            margin-bottom: 2rem;
+        }
+
+        .portal-logo i {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .portal-logo h1 {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .portal-logo p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        /* Security Badge */
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        /* Admin Only Alert */
+        .admin-only-alert {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Mode Switch */
+        .mode-switch {
+            display: flex;
+            background: var(--light-gray);
+            border-radius: 50px;
+            padding: 5px;
+            margin-bottom: 2rem;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            color: var(--gray);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: var(--transition);
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        /* Admin Login Form */
+        .admin-login-form {
+            display: block;
+        }
+
+        .admin-signup-form {
+            display: none;
+        }
+
+        .form-separator {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--gray);
+        }
+
+        .form-separator::before,
+        .form-separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--light);
+        }
+
+        .form-separator span {
+            padding: 0 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Security Field */
+        .security-field {
+            position: relative;
+        }
+
+        .security-field input {
+            padding-right: 40px;
+        }
+
+        .security-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        /* Demo Credentials */
+        .demo-credentials {
+            background: linear-gradient(135deg, var(--light), #e8f4fc);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .demo-credentials h4 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-credentials p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-credentials code {
+            background: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+
+        /* Back to Home */
+        .back-to-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .back-to-home:hover {
+            gap: 0.8rem;
+            color: var(--primary-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .portal-container {
+                padding: 2rem;
+            }
+            
+            .portal-logo i {
+                font-size: 3rem;
+            }
+            
+            .portal-logo h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animation for form switching */
+        .form-transition {
+            animation: formSwitch 0.3s ease;
+        }
+
+        @keyframes formSwitch {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-portal">
+        <div class="portal-container">
+            <!-- Logo -->
+            <div class="portal-logo">
+                <i class="fas fa-user-shield"></i>
+                <h1>Admin Portal</h1>
+                <p>SakhaED Management System</p>
+            </div>
+
+            <!-- Security Badge -->
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>SSL Secured • Admin Access Only</span>
+            </div>
+
+            <!-- Admin Only Alert -->
+            <div class="admin-only-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span><strong>Restricted Access:</strong> Authorized personnel only</span>
+            </div>
+
+            <!-- Mode Switch -->
+            <div class="mode-switch">
+                <button class="mode-btn active" id="loginMode">Login</button>
+                <button class="mode-btn" id="signupMode">Create Admin</button>
+            </div>
+
+            <!-- Login Form -->
+            <form class="admin-login-form" id="adminLoginForm">
+                <div class="form-group">
+                    <label for="admin-email">
+                        <i class="fas fa-envelope"></i> Admin Email
+                    </label>
+                    <input type="email" id="admin-email" placeholder="admin@sakhaed.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <div class="security-field">
+                        <input type="password" id="admin-password" placeholder="Enter your password" required>
+                        <button type="button" class="security-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-secret">
+                        <i class="fas fa-key"></i> Security Key
+                    </label>
+                    <input type="password" id="admin-secret" placeholder="Enter security key" required>
+                    <small style="display: block; margin-top: 0.3rem; color: var(--gray);">
+                        <i class="fas fa-info-circle"></i> Contact system administrator for key
+                    </small>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox">
+                        <input type="checkbox" id="remember-admin">
+                        <i class="fas fa-laptop"></i> Remember this device
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Access Admin Panel
+                </button>
+
+                <div class="demo-credentials">
+                    <h4><i class="fas fa-key"></i> Demo Credentials:</h4>
+                    <p><i class="fas fa-envelope"></i> Email: <code>admin@sakhaed.com</code></p>
+                    <p><i class="fas fa-lock"></i> Password: <code>Admin@123</code></p>
+                    <p><i class="fas fa-key"></i> Security Key: <code>SakhaED2024</code></p>
+                </div>
+            </form>
+
+            <!-- Signup Form -->
+            <form class="admin-signup-form" id="adminSignupForm">
+                <div class="form-group">
+                    <label for="signup-name">
+                        <i class="fas fa-user"></i> Full Name
+                    </label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-email">
+                        <i class="fas fa-envelope"></i> Admin Email
+                    </label>
+                    <input type="email" id="signup-email" placeholder="admin@yourdomain.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <div class="security-field">
+                        <input type="password" id="signup-password" placeholder="Create strong password" required>
+                        <button type="button" class="security-toggle" id="toggleSignupPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div class="strength-level"></div>
+                        </div>
+                        <span class="strength-text">Password strength: Weak</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-secret">
+                        <i class="fas fa-key"></i> Master Security Key
+                    </label>
+                    <input type="password" id="signup-secret" placeholder="Enter master security key" required>
+                    <small style="display: block; margin-top: 0.3rem; color: var(--gray);">
+                        <i class="fas fa-shield-alt"></i> Required for creating admin accounts
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="signup-role">
+                        <i class="fas fa-user-tag"></i> Admin Role
+                    </label>
+                    <select id="signup-role" required>
+                        <option value="">Select Role</option>
+                        <option value="super_admin">Super Administrator</option>
+                        <option value="content_admin">Content Administrator</option>
+                        <option value="user_admin">User Administrator</option>
+                        <option value="financial_admin">Financial Administrator</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-user-plus"></i> Create Admin Account
+                </button>
+
+                <div class="form-separator">
+                    <span>OR</span>
+                </div>
+
+                <button type="button" id="switchToLogin" class="btn btn-outline btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Already have an account? Login
+                </button>
+            </form>
+
+            <!-- Back to Home -->
+            <a href="index.html" class="back-to-home">
+                <i class="fas fa-arrow-left"></i> Back to Home Page
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already logged in as admin
+            const isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn');
+            if (isAdminLoggedIn === 'true') {
+                window.location.href = 'admin-dashboard.html';
+            }
+
+            // Mode switching
+            const loginModeBtn = document.getElementById('loginMode');
+            const signupModeBtn = document.getElementById('signupMode');
+            const loginForm = document.getElementById('adminLoginForm');
+            const signupForm = document.getElementById('adminSignupForm');
+            const switchToLoginBtn = document.getElementById('switchToLogin');
+
+            // Set up mode switching
+            loginModeBtn.addEventListener('click', () => switchMode('login'));
+            signupModeBtn.addEventListener('click', () => switchMode('signup'));
+            switchToLoginBtn?.addEventListener('click', () => switchMode('login'));
+
+            function switchMode(mode) {
+                // Update active button
+                loginModeBtn.classList.toggle('active', mode === 'login');
+                signupModeBtn.classList.toggle('active', mode === 'signup');
+                
+                // Show/hide forms with animation
+                if (mode === 'login') {
+                    signupForm.style.display = 'none';
+                    loginForm.style.display = 'block';
+                    loginForm.classList.add('form-transition');
+                    setTimeout(() => loginForm.classList.remove('form-transition'), 300);
+                } else {
+                    loginForm.style.display = 'none';
+                    signupForm.style.display = 'block';
+                    signupForm.classList.add('form-transition');
+                    setTimeout(() => signupForm.classList.remove('form-transition'), 300);
+                }
+            }
+
+            // Password visibility toggle
+            const togglePassword = document.getElementById('togglePassword');
+            const adminPassword = document.getElementById('admin-password');
+            
+            togglePassword?.addEventListener('click', function() {
+                const type = adminPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                adminPassword.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+
+            // Signup password visibility
+            const toggleSignupPassword = document.getElementById('toggleSignupPassword');
+            const signupPassword = document.getElementById('signup-password');
+            
+            toggleSignupPassword?.addEventListener('click', function() {
+                const type = signupPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                signupPassword.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+
+            // Password strength checker for signup
+            signupPassword?.addEventListener('input', function() {
+                const password = this.value;
+                const strengthBar = document.querySelector('#adminSignupForm .strength-level');
+                const strengthText = document.querySelector('#adminSignupForm .strength-text');
+                
+                let strength = 0;
+                
+                // Length check
+                if (password.length >= 8) strength += 25;
+                if (password.length >= 12) strength += 10;
+                
+                // Character variety checks
+                if (/[a-z]/.test(password)) strength += 20;
+                if (/[A-Z]/.test(password)) strength += 20;
+                if (/[0-9]/.test(password)) strength += 15;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 10;
+                
+                // Update UI
+                strengthBar.style.width = Math.min(strength, 100) + '%';
+                
+                if (strength < 40) {
+                    strengthBar.style.background = '#e74c3c';
+                    strengthText.textContent = 'Password strength: Weak';
+                    strengthText.style.color = '#e74c3c';
+                } else if (strength < 70) {
+                    strengthBar.style.background = '#f39c12';
+                    strengthText.textContent = 'Password strength: Fair';
+                    strengthText.style.color = '#f39c12';
+                } else if (strength < 90) {
+                    strengthBar.style.background = '#3498db';
+                    strengthText.textContent = 'Password strength: Good';
+                    strengthText.style.color = '#3498db';
+                } else {
+                    strengthBar.style.background = '#27ae60';
+                    strengthText.textContent = 'Password strength: Strong';
+                    strengthText.style.color = '#27ae60';
+                }
+            });
+
+            // Admin Login Form Submission
+            document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('admin-email').value;
+                const password = document.getElementById('admin-password').value;
+                const secretKey = document.getElementById('admin-secret').value;
+                const rememberDevice = document.getElementById('remember-admin').checked;
+                
+                // Demo admin credentials
+                const adminCredentials = {
+                    email: 'admin@sakhaed.com',
+                    password: 'Admin@123',
+                    secretKey: 'SakhaED2024'
+                };
+                
+                // Validation
+                if (email === adminCredentials.email && 
+                    password === adminCredentials.password && 
+                    secretKey === adminCredentials.secretKey) {
+                    
+                    // Store admin session
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+                    localStorage.setItem('adminEmail', email);
+                    localStorage.setItem('adminUsername', 'Administrator');
+                    
+                    if (rememberDevice) {
+                        localStorage.setItem('adminRememberDevice', 'true');
+                    }
+                    
+                    // Show success message
+                    showNotification('success', 'Access Granted!', 'Redirecting to Admin Panel...');
+                    
+                    // Redirect to admin dashboard after delay
+                    setTimeout(() => {
+                        window.location.href = 'admin-dashboard.html';
+                    }, 1500);
+                    
+                } else {
+                    // Show error message
+                    showNotification('error', 'Access Denied', 'Invalid admin credentials or security key.');
+                    
+                    // Clear form
+                    document.getElementById('admin-password').value = '';
+                    document.getElementById('admin-secret').value = '';
+                    document.getElementById('admin-email').focus();
+                    
+                    // Add shake animation to form
+                    const form = document.getElementById('adminLoginForm');
+                    form.classList.add('shake');
+                    setTimeout(() => form.classList.remove('shake'), 500);
+                }
+            });
+
+            // Admin Signup Form Submission
+            document.getElementById('adminSignupForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const secretKey = document.getElementById('signup-secret').value;
+                const role = document.getElementById('signup-role').value;
+                
+                // Master security key for creating admin accounts
+                const masterKey = 'SakhaEDMaster2024';
+                
+                if (secretKey !== masterKey) {
+                    showNotification('error', 'Invalid Master Key', 'You need the master security key to create admin accounts.');
+                    return;
+                }
+                
+                if (password.length < 8) {
+                    showNotification('error', 'Weak Password', 'Password must be at least 8 characters long.');
+                    return;
+                }
+                
+                // Store admin data
+                const adminData = {
+                    name: name,
+                    email: email,
+                    role: role,
+                    created: new Date().toISOString()
+                };
+                
+                localStorage.setItem('admin_' + email, JSON.stringify(adminData));
+                
+                // Show success message
+                showNotification('success', 'Admin Account Created!', 
+                    `${name} has been registered as ${role}. You can now login with these credentials.`);
+                
+                // Switch back to login form
+                setTimeout(() => {
+                    switchMode('login');
+                    document.getElementById('admin-email').value = email;
+                    document.getElementById('admin-password').value = password;
+                    document.getElementById('signup-name').value = '';
+                    document.getElementById('signup-email').value = '';
+                    document.getElementById('signup-password').value = '';
+                    document.getElementById('signup-secret').value = '';
+                }, 2000);
+            });
+
+            // Notification function
+            function showNotification(type, title, message) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <h4>${title}</h4>
+                        <p>${message}</p>
+                    </div>
+                    <button class="notification-close">&times;</button>
+                `;
+                
+                // Add styles if not already added
+                if (!document.querySelector('#admin-notification-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'admin-notification-styles';
+                    style.textContent = `
+                        .notification {
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            background: white;
+                            border-radius: 12px;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                            padding: 1.2rem 1.5rem;
+                            display: flex;
+                            align-items: center;
+                            gap: 1.2rem;
+                            z-index: 10000;
+                            animation: slideInRight 0.3s ease;
+                            max-width: 450px;
+                            border-left: 5px solid;
+                            transform-origin: top right;
+                        }
+                        
+                        .notification-success {
+                            border-left-color: #27ae60;
+                            background: linear-gradient(to right, #ffffff, #f0fff4);
+                        }
+                        
+                        .notification-error {
+                            border-left-color: #e74c3c;
+                            background: linear-gradient(to right, #ffffff, #fff5f5);
+                        }
+                        
+                        .notification-icon {
+                            font-size: 2rem;
+                            width: 40px;
+                            height: 40px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                        
+                        .notification-success .notification-icon {
+                            color: #27ae60;
+                        }
+                        
+                        .notification-error .notification-icon {
+                            color: #e74c3c;
+                        }
+                        
+                        .notification-content h4 {
+                            margin: 0 0 0.3rem 0;
+                            color: var(--secondary);
+                            font-size: 1.1rem;
+                        }
+                        
+                        .notification-content p {
+                            margin: 0;
+                            color: var(--gray);
+                            font-size: 0.95rem;
+                            line-height: 1.4;
+                        }
+                        
+                        .notification-close {
+                            background: none;
+                            border: none;
+                            font-size: 1.5rem;
+                            color: var(--gray);
+                            cursor: pointer;
+                            padding: 0;
+                            width: 30px;
+                            height: 30px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 50%;
+                            transition: var(--transition);
+                        }
+                        
+                        .notification-close:hover {
+                            background: var(--light);
+                            color: var(--dark);
+                        }
+                        
+                        @keyframes slideInRight {
+                            from {
+                                transform: translateX(100%) scale(0.9);
+                                opacity: 0;
+                            }
+                            to {
+                                transform: translateX(0) scale(1);
+                                opacity: 1;
+                            }
+                        }
+                        
+                        @keyframes shake {
+                            0%, 100% { transform: translateX(0); }
+                            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                            20%, 40%, 60%, 80% { transform: translateX(5px); }
+                        }
+                        
+                        .shake {
+                            animation: shake 0.5s ease;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                document.body.appendChild(notification);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (notification) {
+                        notification.style.animation = 'slideInRight 0.3s ease reverse';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 5000);
+                
+                // Close button
+                notification.querySelector('.notification-close').addEventListener('click', () => {
+                    notification.style.animation = 'slideInRight 0.3s ease reverse';
+                    setTimeout(() => notification.remove(), 300);
+                });
+            }
+
+            // Pre-fill demo credentials on click
+            document.querySelectorAll('.demo-credentials code').forEach(code => {
+                code.addEventListener('click', function() {
+                    const text = this.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        const original = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                        setTimeout(() => {
+                            this.innerHTML = original;
+                        }, 2000);
+                    });
+                });
+            });
+
+            // Enter key to submit forms
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const activeForm = document.querySelector('.admin-login-form[style*="block"], .admin-signup-form[style*="block"]');
+                    if (activeForm) {
+                        activeForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+
+            // Add some interactive effects
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
